@@ -11,14 +11,11 @@ public class IntList{public static void main(String[] args) {
 	
 	
 	//do the rest
-	numberList.length = numberList.length + 1;
-	numberList[2] = 50;
+	//numberList.length = numberList.length + 1;
+	//numberList[2] = 50;
 	System.out.println(numberList);
 
-	numberList.remove(1);
-	System.out.println(numberList);
 
-	numberList.remove(0);
-	System.out.println(numberList);
-
+	}
+}
 
