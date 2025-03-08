@@ -1,3 +1,7 @@
+import copy
+from stacks import Stack
+#needed for DFS stack
+
 #class VERTEX
 class Vertex:
     def __init__(self, element):
@@ -137,6 +141,41 @@ class Graph:
                 hdv = v 
         return hdv 
 
+#----------------------------------------------------------------------------------------------------#
+    #GRAPH TRAVERSAL
+
+    def dfs_stack(self,v):
+        """Return a DFS tree from v, by using a stack"""
+        marked = {}                     #create dictionary for marked vertices
+        stack = Stack()                 #Create stack object
+        stack.push((v, None))           #push touple with vertex 
+        
+        while stack.length() > 0:       
+            (vertex, edge) = stack.pop()        #pop stack variables into variables 'vertex' & 'edge'
+            if vertex not in marked:
+                marked[vertex] = edge           #set edge value with recenetly recieved stack pop
+                for e in self.get_edges(vertex):    #for edges
+                    w = e.opposite(vertex)          
+                    stack.push((w,e))           #push the marked vertices onto the stack
+            return marked                       #return marked vertices
+
+
+    def depthfirstsearch(self,v ):
+        """Return a DFS tree from v"""
+        marked = {v:None}
+        self.depthfirstsearch(v, marked)
+        return marked
+
+    def _depthfirstsearch(self, v, marked):
+        """Do a recursive DPS from v, storing nodes in marked"""
+        for e in self.get_edges(v):
+            w = e.opposite()
+            if w not in marked:
+                marked[w] = e
+                self._depthfirstsearch(w,marked)
+
+
+
 #testing graph
 def test_graph():
     graph = Graph()
@@ -172,6 +211,35 @@ def test_graph():
     print('Graph should now have a new vertex d with no edges')
     print(graph)
 
+    vlist = graph.depthfirstsearch(c)
+    for key in vlist:
+        print(key, vlist[key])
+
+    print('Depth first search:')
+    vlist = graph.depthfirstsearch(hdv)
+    for key in vlist:
+        print(key, vlist[key])
+
+    print("Depth First search using Stack")
+    vlist = graph.dfs_stack(hdv)
+    for key in vlist:
+        print(key, vlist[key])
+
+
+
+def get_path(v, tree):
+    """Extract path from root to v, from backwards search Tree"""
+    s = Stack()
+    s.push(v)
+     _get_path(v,tree,s)
+    return s 
+    
+def _get_path(v, tree, stack):
+    """Extract a path from root to v in tree, and add to stack"""
+    previous = tree[v][0]
+    if previous != None:
+        stack.push(previous)
+        _get_path(previous, tree, stack) 
 
 def read_dolphin_graph():
     """ Read the dolphins file, return the graph and separate names dict. """
@@ -219,5 +287,7 @@ def process_dolphins():
         '(', names[hdv.element()], ')'
         'has the highest degree =',
         graph.degree(hdv))
+
+
 
 process_dolphins()
