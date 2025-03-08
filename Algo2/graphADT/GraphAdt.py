@@ -1,4 +1,5 @@
 #class VERTEX
+from Stack import *
 class Vertex:
     def __init__(self, element):
         self._element = element
@@ -31,7 +32,7 @@ class Edge:
     def vertices(self):
         return self._vertices
 
-    def opposite(v):
+    def opposite(self, v):
         if self._vertices[0] == v:
             return self._vertices[1]
         elif self._vertices[1] == v:
@@ -93,6 +94,14 @@ class Graph:
                 edgelist.append(self._structure[v][w])
             return edgelist
         return None
+    
+    def get_edges(self,v):
+        #return a list of all vertices incident on v
+
+        if v in self._structure:
+            return list(self._structure[v].values())
+        return None
+
 
     def get_edge(self,v,w):
         if (self._structure != None and v in self._structure and w in self._structure[v]):
@@ -113,7 +122,7 @@ class Graph:
         for v in self._structure:
             if v.element() == element:
                 return v    #already in graph
-            return self._add_vertex(element)
+            return self.add_vertex(element)
 
     def add_edge(self,v,w,element):
         if not v in self._structure or not w in self._structure:
@@ -136,41 +145,48 @@ class Graph:
                 hdv = v 
         return hdv 
 
-#testing graph
 def test_graph():
+    """ Test on the larger graph from lectures. """
     graph = Graph()
     a = graph.add_vertex('a')
     b = graph.add_vertex('b')
     c = graph.add_vertex('c')
-    d = graph.add_vertex_if_new('b') #should not create a vertex
-    eab = graph.add_edge(a, b, 2)
-    ebc = graph.add_edge(b,c,9)
-    vnone = Vertex('dummy')
-    evnone = graph.add_edge(vnone, c, 0) #should not create an edge
-    if evnone is not None:
-        print('ERROR: attempted edges should have been none')
-    edges = graph.get_edges(vnone) #should be None: vnone not in graph
-    if edges != None:
-        print('ERROR: returned edges for non-existent vertex.')
-    print('number of vertices:', graph.num_vertices())
-    print('number of edges:', graph.num_edges())
-    print('Vertex list should be a,b,c in any order :')
-    vertices = graph.vertices()
-    for key in vertices:
-        print(key.element())
-    print('Edge list should be (a,b,2),(b,c,9) in any order :')
-    edges = graph.edges()
-    for edge in edges:
-        print(edge)
-    print('Graph display should repeat the above:')
-    print(graph)
-    v = graph.add_vertex('d')
-    edges = graph.get_edges(v)
-    if edges != []:
-        print('ERROR: should have returned an empty list, but got', edges)
-    print('Graph should now have a new vertex d with no edges')
+    d = graph.add_vertex('d')
+    e = graph.add_vertex('e')
+    f = graph.add_vertex('f')
+    g = graph.add_vertex('g')
+    h = graph.add_vertex('h')
+    i = graph.add_vertex('i')
+    j = graph.add_vertex('j')
+    k = graph.add_vertex('k')
+    l = graph.add_vertex('l')
+    m = graph.add_vertex('m')
+    graph.add_edge(a,b,1)
+    graph.add_edge(a,e,1)
+    graph.add_edge(a,h,1)
+    graph.add_edge(b,c,1)
+    graph.add_edge(b,e,1)
+    graph.add_edge(c,d,1)
+    graph.add_edge(c,g,1)
+    graph.add_edge(d,f,1)
+    graph.add_edge(e,f,1)
+    graph.add_edge(e,k,1)
+    graph.add_edge(f,i,1)
+    graph.add_edge(g,j,1)
+    graph.add_edge(h,m,1)
+    graph.add_edge(i,j,1)
+    graph.add_edge(i,k,1)
+    graph.add_edge(j,l,1)
+    graph.add_edge(k,l,1)
+    graph.add_edge(k,m,1)
+
+    hdv = graph.highestdegreevertex()
+    print(hdv.element(), 'has the highest degree =', graph.degree(hdv))
     print(graph)
 
+    hdv = graph.highestdegreevertex()
+    print(hdv.element(),'has the highest degree =',graph.degree(hdv))
+    print(graph)
 
 def read_dolphin_graph():
     """ Read the dolphins file, return the graph and separate names dict. """
@@ -182,6 +198,7 @@ def read_dolphin_graph():
     file.readline() #the opening square bracket
     file.readline() #the comment that the graph is not directed
     wordlist = file.readline().split()
+
     while wordlist[0] != ']':
         if wordlist[0] == 'node':
             file.readline() #open bracket
@@ -220,3 +237,4 @@ def process_dolphins():
         graph.degree(hdv))
 
 process_dolphins()
+test_graph()
